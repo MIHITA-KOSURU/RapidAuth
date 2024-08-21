@@ -1,0 +1,68 @@
+import time
+import random
+import string
+import tkinter as tk
+from tkinter import messagebox
+
+correct_password = "SecureP@ssw0rd"
+def generate_random_code(length=12):
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+
+def typing_speed_check():
+    code = generate_random_code()
+    def check_speed():
+        start_time = time.time()
+        user_input = text_input.get("1.0", tk.END).strip()
+        end_time = time.time()
+        
+        typing_time = end_time - start_time
+        
+        if user_input == code:
+            if typing_time < 10:  
+                messagebox.showinfo("Success", "Authentication successful!")
+                root.quit()
+            else:
+                messagebox.showwarning("Failure", "Typing speed check failed. Authentication failed.")
+        else:
+            messagebox.showwarning("Failure", "Typing test failed. Authentication failed.")
+    
+    root = tk.Tk()
+    root.title("Typing Speed Test")
+    root.configure(bg='#f0f0f0') 
+    tk.Label(root, text="Type the following code as quickly as you can:", font=('Arial', 14), bg='#f0f0f0').pack(pady=10)
+    tk.Label(root, text=code, font=('Courier', 18, 'bold'), bg='#f0f0f0').pack(pady=10)
+    
+    text_input = tk.Text(root, height=3, width=40, font=('Courier', 16))
+    text_input.pack(pady=10)
+    
+    tk.Button(root, text="Submit", command=check_speed, font=('Arial', 12), bg='#4CAF50', fg='white').pack(pady=10)
+    
+    root.mainloop()
+
+def authenticate():
+    main_window = tk.Tk()
+    main_window.title("Login")
+
+    main_window.configure(bg='#e0e0e0')  
+
+    def on_login():
+        password = password_entry.get()
+        
+        if password != correct_password:
+            messagebox.showwarning("Failure", "Password incorrect!")
+        else:
+            messagebox.showinfo("Success", "Password accepted. Please complete the typing test for additional security.")
+            main_window.destroy()
+            typing_speed_check()
+    
+    tk.Label(main_window, text="Enter your password:", font=('Arial', 14), bg='#e0e0e0').pack(pady=10)
+    password_entry = tk.Entry(main_window, show='*', font=('Arial', 14))
+    password_entry.pack(pady=10)
+    
+    tk.Button(main_window, text="Login", command=on_login, font=('Arial', 12), bg='#4CAF50', fg='white').pack(pady=10)
+    
+    main_window.mainloop()
+
+if __name__ == "__main__":
+    authenticate()
